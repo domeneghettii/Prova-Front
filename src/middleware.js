@@ -5,6 +5,6 @@ export const config = {
 };
 
 export default function middleware(req) {
-    return NextResponse.redirect(new URL("/home", req.url));
+    return NextResponse.redirect(new URL("/Home", req.url));
 }
 

@@ -5,10 +5,6 @@ import axios from "axios";
 import { Pagination, Modal, Card, Skeleton } from "antd";
 import Image from "next/image";
 import { ToastContainer, toast } from "react-toastify";
-import {
-    getSessionStorage,
-    setSessionStorage,
-} from "../../utils/sessionStorage";
 import styles from "./Pedidos.module.css";
 
 const HEADERS = { "x-api-key": process.env.NEXT_PUBLIC_API_KEY };
@@ -18,13 +14,13 @@ export default function Pedidos() {
         pedidos: [],
         loading: true,
         current: 1,
-        pageSize: 5,
+        pageSize: 0,
     });
 
     const [modalInfo, setModalInfo] = useState({
         visible: false,
         pedidos: null,
-        endereco: null,
+        entregas: null,
         loading: false,
     });
 
@@ -38,13 +34,13 @@ export default function Pedidos() {
 
             try {
                 const { data: pedidos } = await axios.get(
-                    `${process.env.NEXT_PUBLIC_API_URL}/entrega`,
+                    `${process.env.NEXT_PUBLIC_API_URL}/entregas`,
                     {
                         headers: HEADERS,
                     }
                 );
                 setSessionStorage("pedidosData", pedidos);
-                setData({ pedidos, loading: false, current: 1, pageSize: 5 });
+                setData({ pedidos, loading: false, current: 1, pageSize: 60 });
             } catch {
                 toast.error("Erro ao carregar pedidos");
                 setData((d) => ({ ...d, loading: false }));
@@ -55,14 +51,10 @@ export default function Pedidos() {
     }, []);
 
     const openModal = async (pedido) => {
-        setModalInfo({ visible: true, pedido, endereco: null, loading: true });
+        setModalInfo({ visible: true, pedido, entregas: null, loading: true });
 
-        const cacheKey = `endereco_${pedido.id}`;
-        const cached = getSessionStorage(cacheKey, null);
-        if (cached) {
-            setModalInfo((m) => ({ ...m, endereco: cached, loading: false }));
-            return;
-        }
+        const cacheKey = `entregas_${pedido.id}`;
+        
 
         try {
             const { data: endereco } = await axios.get(
@@ -71,7 +63,6 @@ export default function Pedidos() {
                     headers: HEADERS,
                 }
             );
-            setSessionStorage(cacheKey, endereco);
             setModalInfo((m) => ({ ...m, endereco, loading: false }));
         } catch {
             toast.error("Erro ao carregar endereço.");

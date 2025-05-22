@@ -26,21 +26,12 @@ export default function Pedidos() {
 
     useEffect(() => {
         const fetchPedidos = async () => {
-            const cached = getSessionStorage("PedidosData", []);
-            if (cached.length > 0) {
-                setData({ pedidos: cached, loading: false, current: 1, pageSize: 5 });
-                return;
-            }
-
             try {
                 const { data: pedidos } = await axios.get(
                     `${process.env.NEXT_PUBLIC_API_URL}/entregas`,
-                    {
-                        headers: HEADERS,
-                    }
+                    {headers: HEADERS,}
                 );
-                setSessionStorage("pedidosData", pedidos);
-                setData({ pedidos, loading: false, current: 1, pageSize: 60 });
+                setData({ pedidos, loading: false, current: 1, pageSize: 5 });
             } catch {
                 toast.error("Erro ao carregar pedidos");
                 setData((d) => ({ ...d, loading: false }));
@@ -53,15 +44,10 @@ export default function Pedidos() {
     const openModal = async (pedido) => {
         setModalInfo({ visible: true, pedido, entregas: null, loading: true });
 
-        const cacheKey = `entregas_${pedido.id}`;
-        
-
         try {
             const { data: endereco } = await axios.get(
-                `${process.env.NEXT_PUBLIC_API_URL}/endereco/${pedido.id}`,
-                {
-                    headers: HEADERS,
-                }
+                `${process.env.NEXT_PUBLIC_API_URL}/entregas/${pedido.id}`,
+                {headers: HEADERS,}
             );
             setModalInfo((m) => ({ ...m, endereco, loading: false }));
         } catch {
@@ -102,7 +88,7 @@ export default function Pedidos() {
                             onClick={() => openModal(pedido)}
                             cover={
                                 <Image
-                                    alt={pedido.name_entrega}
+                                    alt={pedido.name_entregas}
                                     src={pedido.photo ? pedido.photo : "/images/220.svg"}
                                     width={220}
                                     height={220}

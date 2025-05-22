@@ -38,7 +38,7 @@ export default function Home() {
                             <li>Propósito: Permitir cadastrar, listar, atualizar e remover pedidos e entregadores, além de consultar pedidos por status ou entregador, facilitando o controle de entregas em um sistema de logística ou delivery.</li>
                         </ul>
                     </div>
-                    <Link href="/Pedidos" prefetch>
+                    <Link href="/pedidos" prefetch>
                     <Button type="primary">Ir para a página de pedidos</Button>
                     </Link>
                 </Flex>
